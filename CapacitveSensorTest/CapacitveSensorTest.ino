@@ -16,24 +16,12 @@ CapPin cPin_2  = CapPin(2);     // read pin 2 (SDA on Flora)  - connect to NES l
 CapPin cPin_3  = CapPin(3);     // read pin 3 (SCL on Flora)  - connect to NES down
 
 CapPin pins[] = {cPin_10, cPin_9, cPin_6, cPin_12, cPin_1, cPin_0, cPin_2, cPin_3};
-//long KEY_RETURN = 176; 
-//long KEY_RIGHT_ARROW=215; 
-//long KEY_UP_ARROW = 218;
-//long KEY_LEFT_ARROW= 216;
-//long KEY_DOWN_ARROW =217;
 
-// check http://arduino.cc/en/Reference/KeyboardModifiers for more info on unique keys
-
-// WASD D-pad, select = Return, start = Space, LeftButton = z, RightButton = x
-//char Keys[] =   {  'x',    'z',    ' ',     KEY_RETURN,    'd',     'w',    'a',    's'};
-
-// arrow D-pad, select = Return, start = Space, LeftButton = b, RightButton = a
 char Keys[] =   {  'a',    'b',    ' ',     KEY_RETURN, KEY_RIGHT_ARROW, KEY_UP_ARROW, KEY_LEFT_ARROW, KEY_DOWN_ARROW};
 
 boolean currentPressed[] = {false, false, false, false, false, false, false, false};
 
-// Capactive touch threashhold, you might want to mess with this if you find its too
-// sensitive or not sensitive enough
+// set the capactive touch threashhold, ajust the sensitive by changing the threash number
 #define THRESH 500
 
 float smoothed[8] = {0,0,0,0,0,0,0,0};
@@ -55,21 +43,15 @@ void loop()
     long start = millis();
     long total =  pins[i].readPin(2000);
 
-    // check if we are sensing that a finger is touching the pad 
-    // and that it wasnt already pressed
+    // sensing the touch on the fabric.
     if ((total > THRESH) && (! currentPressed[i])) {
-      Serial.print("Key pressed #"); Serial.print(i);
-      Serial.print(" ("); Serial.print(Keys[i]); Serial.println(")");
-      currentPressed[i] = true;
 
+      currentPressed[i] = true;
       Keyboard.press(Keys[i]);
     } 
     else if ((total <= THRESH) && (currentPressed[i])) {
-      // key was released (no touch, and it was pressed before)
-      Serial.print("Key released #"); Serial.print(i);
-      Serial.print(" ("); Serial.print(Keys[i]); Serial.println(")");
+
       currentPressed[i] = false;
-      
       Keyboard.release(Keys[i]);
     }
 
